@@ -6,6 +6,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Question\Question;
 
 use ZipArchive;
 use DOMDocument;
@@ -22,15 +23,22 @@ class CreateCommand extends Command {
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
- $zip = new ZipArchive;
-    if ($zip->open('webflow.zip') === TRUE) {
+      $helper = $this->getHelper('question');
+      $question = new Question('Please enter the name of the zip file: ', 'webflow');
+      $bundlezip = $helper->ask($input, $output, $question);
+
+      $withZip = $bundlezip. ".zip";
+      echo $withZip;
+
+      $zip = new ZipArchive;
+      if ($zip->open($withZip) === TRUE) {
       $zip->extractTo('html/');
       $zip->close();
       echo 'Archive extracted to html/ folder!'."\r\n";
     } else {
       echo 'Failed to open the archive!'."\r\n";
     }
-    $directory = "html/fit/";
+    $directory = "html/{$bundlezip}/";
     $htmlfiles = glob($directory . "*.html");
     $files = array();
     foreach($htmlfiles as &$file){
