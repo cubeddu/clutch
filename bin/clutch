@@ -13,7 +13,7 @@ $application = new Application('
 / /___/ /__\ \_/ // / / /___/ __  /
 \____/\____/\___/ \/  \____/\/ /_/
 
-Cliph', '@package_version@');
+Cliph', '1.0.1');
 
 $application->add(new Command\CreateCommand());
 $application->add(new Command\UpdateCommand());
