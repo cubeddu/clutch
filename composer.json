@@ -1,0 +1,14 @@
+{
+    "name": "cubeddu/clutch",
+    "description": "Drupal 8 theme generator",
+    "license": "MIT",
+    "require": {
+        "symfony/console": "~2.3",
+        "herrera-io/phar-update": "~1.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Clutch": "src"
+        }
+    }
+}
