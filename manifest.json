@@ -4,5 +4,11 @@
         "sha1": "5ab449f092d1f6f5cbd2236db749d18aef0d615d",
         "url": "http://cubeddu.github.io/clutch/Download/clutch-0.1.1.phar",
         "version": "1.1.0"
+    },
+    {
+        "name": "clutch.phar",
+        "sha1": "5ab449f092d1f6f5cbd2236db749d18aef0d615d",
+        "url": "http://cubeddu.github.io/clutch/Download/clutch-0.1.3.phar",
+        "version": "0.1.3"
     }
 ]
