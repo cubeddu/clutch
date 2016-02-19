@@ -38,7 +38,7 @@ class CreateCommand extends Command {
     } else {
       echo 'Failed to open the archive!'."\r\n";
     }
-    $directory = "html/{$bundlezip}/";
+      $directory = "html/{$bundlezip}/";
     $htmlfiles = glob($directory . "*.html");
     $files = array();
     foreach($htmlfiles as &$file){
