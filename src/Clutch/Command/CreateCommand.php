@@ -18,15 +18,22 @@ class CreateCommand extends Command {
         $this
             ->setName('create:components')
             ->setDescription('This will generate your components folder')
-        ;
+ ->setDefinition(array(
+                new InputOption('zip-file', 'z', InputOption::VALUE_REQUIRED, 'Name of the zip file.'),
+                new InputArgument('activities', InputArgument::IS_ARRAY, 'Space-separated activities to perform', null),
+             ))        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-      $helper = $this->getHelper('question');
-      $question = new Question('Please enter the name of the zip file: ', 'webflow');
-      $bundlezip = $helper->ask($input, $output, $question);
 
+      $bundlezip = $input->getOption('zip-file');
+      if(!$bundlezip){
+
+        $helper = $this->getHelper('question');
+        $question = new Question('Please enter the name of the zip file: ', '[webflow]');
+        $bundlezip = $helper->ask($input, $output, $question);
+      }
       $withZip = $bundlezip. ".zip";
       echo $withZip;
 
