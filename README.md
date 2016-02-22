@@ -13,3 +13,4 @@ chmod +x /usr/local/bin/clutch
 # Show all available commands.
 clutch list
 ```
+[![Demo]](https://asciinema.org/a/3w3ydt7qgax24dsal7mjuoqo3)
