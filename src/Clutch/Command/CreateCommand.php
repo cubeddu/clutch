@@ -7,45 +7,62 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 
 use ZipArchive;
 use DOMDocument;
 use DOMXPath;
 
 class CreateCommand extends Command {
-    protected function configure()
-    {
-        $this
-            ->setName('create:components')
-            ->setDescription('This will generate your components folder')
- ->setDefinition(array(
-                new InputOption('zip-file', 'z', InputOption::VALUE_REQUIRED, 'Name of the zip file.'),
-                new InputArgument('activities', InputArgument::IS_ARRAY, 'Space-separated activities to perform', null),
-             ))        ;
+  protected function configure()
+  {
+    $this
+      ->setName('create:components')
+      ->setDescription('This will generate your components folder')
+      ->setDefinition(array(
+        new InputOption('zip-file', 'z', InputOption::VALUE_REQUIRED, 'Name of the zip file.'),
+        new InputArgument('activities', InputArgument::IS_ARRAY, 'Space-separated activities to perform', null),
+      ))        ;
+  }
+
+  protected function execute(InputInterface $input, OutputInterface $output)
+  {
+    /* $output->getFormatter()->setStyle('fcbarcelona', new OutputFormatterStyle( 'white', 'red' )); */
+    /* $output->writeln('<fcbarcelona>Messi for the win</fcbarcelona>'); */
+    /* $dialog = $this->getHelperSet()->get('dialog'); */
+    /*         if (!$dialog->askConfirmation($output, '<question>Do you confirm spamming our users?</question>', false)) { */
+    /*             return; */
+    /*         } */
+    /*         $output->writeln('<comment>Starting Newsletter process</comment>'); */
+    /*         $output->writeln('<info>Newsletter process ended succesfully</info>'); */
+
+    $bundlezip = $input->getOption('zip-file');
+    if(!$bundlezip){
+
+      $helper = $this->getHelper('question');
+
+      /* $question = new Question("What is your language?\n", 'english'); */
+      $question = new Question('<info>Please enter the name of the zip file:</info><comment>[webflow]</comment> ', 'webflow');
+      /* $question = new ConfirmationQuestion("Do you confirm this action? (yes/no) ", false); */
+      /* $question = new ChoiceQuestion( */
+      /*    "What is your favorite website", */
+      /*    ['sitepoint.com', 'google.com', 'twitter.com'], */
+      /*    0 */
+      /* ); */
+      $bundlezip = $helper->ask($input, $output, $question);
     }
+    $withZip = $bundlezip. ".zip";
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-
-      $bundlezip = $input->getOption('zip-file');
-      if(!$bundlezip){
-
-        $helper = $this->getHelper('question');
-        $question = new Question('Please enter the name of the zip file: ', '[webflow]');
-        $bundlezip = $helper->ask($input, $output, $question);
-      }
-      $withZip = $bundlezip. ".zip";
-      echo $withZip;
-
-      $zip = new ZipArchive;
-      if ($zip->open($withZip) === TRUE) {
+    $zip = new ZipArchive;
+    if ($zip->open($withZip) === TRUE) {
       $zip->extractTo('html/');
       $zip->close();
-      echo 'Archive extracted to html/ folder!'."\r\n";
     } else {
       echo 'Failed to open the archive!'."\r\n";
     }
-      $directory = "html/{$bundlezip}/";
+    $directory = "html/{$bundlezip}/";
     $htmlfiles = glob($directory . "*.html");
     $files = array();
     foreach($htmlfiles as &$file){
@@ -117,7 +134,8 @@ class CreateCommand extends Command {
         }
         $filename = 'components/' . $info[0] . '/' . $info[0] . '.html.twig';
         file_put_contents($filename, $info[2]);
-        echo "$filename \r\n";
+        $output->writeln('<comment>'.$filename.' </comment>');
+        /* echo count($filename++); */
 
         $yaml_filename = 'components/' . $info[0] . '/' . $info[0] . '.yml';
         $yaml = $html_filename . '_' . $info[0] . ":\r\n  ";
@@ -135,6 +153,7 @@ class CreateCommand extends Command {
         file_put_contents($yaml_filename, $yaml);
       }
     }
+
     function deleteDirectory($dirPath) {
       if (is_dir($dirPath)) {
         $objects = scandir($dirPath);
@@ -152,6 +171,6 @@ class CreateCommand extends Command {
       }
     }
     deleteDirectory('html');
-    }
+  }
 }
 
