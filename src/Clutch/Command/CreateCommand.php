@@ -19,7 +19,7 @@ class CreateCommand extends Command {
   protected function configure()
   {
     $this
-      ->setName('create:components')
+      ->setName('create')
       ->setDescription('This will generate your components folder')
       ->setDefinition(array(
         new InputOption('zip-file', 'z', InputOption::VALUE_REQUIRED, 'Name of the zip file.'),
@@ -71,7 +71,7 @@ class CreateCommand extends Command {
           // print_r($temp);
 
             if (( $file != '.' ) && ( $file != '..' )) {
-                if ( is_dir($src . '/' . $file) ) {  
+                if ( is_dir($src . '/' . $file) ) {
                   recurse_copy($src . '/' . $file,$dst . '/' . $file);
                 }
                 else {
@@ -104,10 +104,17 @@ class CreateCommand extends Command {
 // file_get_contents($data_base);
 // $vars = array(
 //   '{$club}'       => 'Barcelona',
-//   '{$tag}'        => 'sometext', 
+//   '{$tag}'        => 'sometext',
 //   '{$anothertag}' => 'someothertext'
 // );
+    function replace_tags($string){
+        $vars = array('{{themeName}}'=>'Bob', '{{themeDescription}}'=>'user_name');
+        return str_replace(array_keys($vars), $vars, $string);
+    }
 
+$template = file_get_contents('../../../template/info.yml', true);
+
+echo replace_tags($template);
     $files = array();
     foreach($htmlfiles as &$file){
       $bundle_file_name = basename($file,".html");

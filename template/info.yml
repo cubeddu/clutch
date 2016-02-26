@@ -1,0 +1,17 @@
+name: {{themeName}}
+type: theme
+description: {{themeDescription}}
+package: Other
+core: 8.x
+
+
+#Using Classy as a base theme https://www.drupal.org/theme-guide/8/classy
+
+libraries:
+  - {{themeName}}/global-css
+  - {{themeName}}/global-js
+
+region:
+  header:   Header
+  content:  Content
+  footer:   Footer

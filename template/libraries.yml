@@ -1,0 +1,12 @@
+global-css:
+  css:
+    theme:
+      css/normalize.css: {}
+      css/webflow.css: {}
+      css/parksyouthranch.webflow.css: {}
+global-js:
+  js:
+    js/webflow.js: {}
+  dependencies:
+    - core/jquery
+    - core/modernizr

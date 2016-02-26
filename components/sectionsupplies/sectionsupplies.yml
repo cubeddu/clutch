@@ -1,0 +1,17 @@
+index_sectionsupplies:
+  label: index_sectionsupplies
+  id: index_sectionsupplies:
+  fields:
+      h5:
+          label: h5
+          required: false
+          type: text
+          cardinality: 1
+          custom_storage: false
+       supplies:
+          label: supplies
+          required: false
+          type: text
+          cardinality: 1
+          custom_storage: false
+       

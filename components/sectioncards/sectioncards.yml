@@ -1,0 +1,59 @@
+index_sectioncards:
+  label: index_sectioncards
+  id: index_sectioncards:
+  fields:
+      donate:
+          label: donate
+          required: false
+          type: text
+          cardinality: 1
+          custom_storage: false
+       parks:
+          label: parks
+          required: false
+          type: text
+          cardinality: 1
+          custom_storage: false
+       bodysupport:
+          label: bodysupport
+          required: false
+          type: text_long
+          cardinality: 1
+          custom_storage: false
+       part:
+          label: part
+          required: false
+          type: text
+          cardinality: 1
+          custom_storage: false
+       party:
+          label: party
+          required: false
+          type: text
+          cardinality: 1
+          custom_storage: false
+       strap:
+          label: strap
+          required: false
+          type: text_long
+          cardinality: 1
+          custom_storage: false
+       volun:
+          label: volun
+          required: false
+          type: text
+          cardinality: 1
+          custom_storage: false
+       mentors:
+          label: mentors
+          required: false
+          type: text
+          cardinality: 1
+          custom_storage: false
+       become:
+          label: become
+          required: false
+          type: text_long
+          cardinality: 1
+          custom_storage: false
+       

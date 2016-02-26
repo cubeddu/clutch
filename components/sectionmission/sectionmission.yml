@@ -1,0 +1,17 @@
+index_sectionmission:
+  label: index_sectionmission
+  id: index_sectionmission:
+  fields:
+      h3:
+          label: h3
+          required: false
+          type: text
+          cardinality: 1
+          custom_storage: false
+       h2:
+          label: h2
+          required: false
+          type: text
+          cardinality: 1
+          custom_storage: false
+       

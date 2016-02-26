@@ -1,0 +1,17 @@
+index_header:
+  label: index_header
+  id: index_header:
+  fields:
+      h1:
+          label: h1
+          required: false
+          type: text
+          cardinality: 1
+          custom_storage: false
+       content:
+          label: content
+          required: false
+          type: text_long
+          cardinality: 1
+          custom_storage: false
+       

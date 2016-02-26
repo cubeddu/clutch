@@ -1,0 +1,17 @@
+index_section:
+  label: index_section
+  id: index_section:
+  fields:
+      h2:
+          label: h2
+          required: false
+          type: text
+          cardinality: 1
+          custom_storage: false
+       content:
+          label: content
+          required: false
+          type: text_long
+          cardinality: 1
+          custom_storage: false
+       
