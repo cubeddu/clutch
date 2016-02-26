@@ -23,47 +23,91 @@ class CreateCommand extends Command {
       ->setDescription('This will generate your components folder')
       ->setDefinition(array(
         new InputOption('zip-file', 'z', InputOption::VALUE_REQUIRED, 'Name of the zip file.'),
-        new InputArgument('activities', InputArgument::IS_ARRAY, 'Space-separated activities to perform', null),
+        new InputOption('theme-name', 't', InputOption::VALUE_REQUIRED, 'Theme Name'),
       ))        ;
   }
 
   protected function execute(InputInterface $input, OutputInterface $output)
   {
-    /* $output->getFormatter()->setStyle('fcbarcelona', new OutputFormatterStyle( 'white', 'red' )); */
-    /* $output->writeln('<fcbarcelona>Messi for the win</fcbarcelona>'); */
-    /* $dialog = $this->getHelperSet()->get('dialog'); */
-    /*         if (!$dialog->askConfirmation($output, '<question>Do you confirm spamming our users?</question>', false)) { */
-    /*             return; */
-    /*         } */
-    /*         $output->writeln('<comment>Starting Newsletter process</comment>'); */
-    /*         $output->writeln('<info>Newsletter process ended succesfully</info>'); */
-
     $bundlezip = $input->getOption('zip-file');
     if(!$bundlezip){
-
       $helper = $this->getHelper('question');
-
-      /* $question = new Question("What is your language?\n", 'english'); */
-      $question = new Question('<info>Please enter the name of the zip file:</info><comment>[webflow]</comment> ', 'webflow');
-      /* $question = new ConfirmationQuestion("Do you confirm this action? (yes/no) ", false); */
-      /* $question = new ChoiceQuestion( */
-      /*    "What is your favorite website", */
-      /*    ['sitepoint.com', 'google.com', 'twitter.com'], */
-      /*    0 */
-      /* ); */
+      $question = new Question("What is your language?\n", 'english');
+      $question = new Question('<info>Please enter the name of the zip file:</info> <comment>[webflow]</comment> ', 'webflow');
       $bundlezip = $helper->ask($input, $output, $question);
     }
+    // echo $bundlezip;
     $withZip = $bundlezip. ".zip";
 
+    $theme = $input->getOption('theme-name');
+    if(!$theme){
+      $helper = $this->getHelper('question');
+      $question = new Question('<info>Please enter theme name:</info> <comment>[webflow]</comment> ', 'webflow');
+      $theme = $helper->ask($input, $output, $question);
+    }
+    // echo $theme;
     $zip = new ZipArchive;
     if ($zip->open($withZip) === TRUE) {
       $zip->extractTo('html/');
       $zip->close();
+      $output->writeln('<info>Starting Theme creation process</info>');
     } else {
-      echo 'Failed to open the archive!'."\r\n";
+      $output->writeln('<comment>Failed to open the archive!</comment>');
     }
     $directory = "html/{$bundlezip}/";
+    $cssDir = "html/{$bundlezip}/css";
+    $jsDir = "html/{$bundlezip}/js";
+    $fontDir = "html/{$bundlezip}/fonts";
+    $imgDir = "html/{$bundlezip}/images";
+    $themecss = "{$theme}/css";
+    $themejs = "{$theme}/js";
+    $themefont = "{$theme}/fonts";
+    $themeimg = "{$theme}/images";
     $htmlfiles = glob($directory . "*.html");
+    function recurse_copy($src,$dst) {
+        $dir = opendir($src);
+        @mkdir($dst);
+        while(false !== ( $file = readdir($dir)) ) {
+          // print_r($temp);
+
+            if (( $file != '.' ) && ( $file != '..' )) {
+                if ( is_dir($src . '/' . $file) ) {  
+                  recurse_copy($src . '/' . $file,$dst . '/' . $file);
+                }
+                else {
+                    copy($src . '/' . $file,$dst . '/' . $file);
+                }
+            }
+        }
+        closedir($dir);
+    }
+    if (!file_exists($theme)) {
+        mkdir($theme, 0777, true);
+      }
+
+    // Move files from zip to new theme.
+    recurse_copy($jsDir,$themejs);
+    recurse_copy($fontDir,$themefont);
+    recurse_copy($imgDir,$themeimg);
+
+    $css = opendir($cssDir);
+      while(false !== ( $file = readdir($css)) ) {
+        if ( substr($file, -12) == '.webflow.css'){
+          rename( $cssDir.'/'.$file, $cssDir.'/'.$theme.substr($file, -12));
+        }
+      }
+    // Move css from zip rename with theme name.
+    recurse_copy($cssDir,$themecss);
+
+
+// $data_base = 'I am a {$club} fan. okay anohter {$tag} from another tag {$anothertag}'; // Tests
+// file_get_contents($data_base);
+// $vars = array(
+//   '{$club}'       => 'Barcelona',
+//   '{$tag}'        => 'sometext', 
+//   '{$anothertag}' => 'someothertext'
+// );
+
     $files = array();
     foreach($htmlfiles as &$file){
       $bundle_file_name = basename($file,".html");
@@ -113,11 +157,12 @@ class CreateCommand extends Command {
       //Generate files
       $html_filename = basename($file);
       $html_filename = str_replace('.html', '', $html_filename);
+      $theme_components = $theme."/components/";
       // var_dump($bundle_names);
-      if (!file_exists('components/')) {
-        mkdir('components/', 0777, true);
+      if (!file_exists($theme_components)) {
+        mkdir($theme_components, 0777, true);
       }
-      $page = 'components/pages.yml';
+      $page = $theme_components.'pages.yml';
       if(0 < count($bundle_names)){
         $pageBundle = $bundle_file_name . ":\r\n  ";
         $pageBundle .= 'Bundles:' . "\r\n      ";
@@ -126,18 +171,18 @@ class CreateCommand extends Command {
         }
         $pageBundle .= '' . "\r\n\r\n";
       }
-
       file_put_contents($page, $pageBundle, FILE_APPEND);
+
       foreach ($extracted_info as &$info) {
-        if (!file_exists('components/' . $info[0] . '')) {
-          mkdir('components/' . $info[0] . '', 0777, true);
+        if (!file_exists($theme_components . $info[0] )) {
+          mkdir($theme_components . $info[0] , 0777, true);
         }
-        $filename = 'components/' . $info[0] . '/' . $info[0] . '.html.twig';
+        $filename = $theme_components . $info[0] . '/' . $info[0] . '.html.twig';
         file_put_contents($filename, $info[2]);
         $output->writeln('<comment>'.$filename.' </comment>');
         /* echo count($filename++); */
 
-        $yaml_filename = 'components/' . $info[0] . '/' . $info[0] . '.yml';
+        $yaml_filename = $theme_components . $info[0]. '/' . $info[0] . '.yml';
         $yaml = $html_filename . '_' . $info[0] . ":\r\n  ";
         $yaml .= 'label: ' . $html_filename . '_' . $info[0] . "\r\n  ";
         $yaml .= 'id: ' . $html_filename . '_' . $info[0] . ":\r\n  ";
@@ -171,6 +216,8 @@ class CreateCommand extends Command {
       }
     }
     deleteDirectory('html');
+
+    $output->writeln('<info>Good Job your theme is ready!</info>');
   }
 }
 
