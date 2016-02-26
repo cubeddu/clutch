@@ -71,7 +71,7 @@ class CreateCommand extends Command {
           // print_r($temp);
 
             if (( $file != '.' ) && ( $file != '..' )) {
-                if ( is_dir($src . '/' . $file) ) {  
+                if ( is_dir($src . '/' . $file) ) {
                   recurse_copy($src . '/' . $file,$dst . '/' . $file);
                 }
                 else {
@@ -104,9 +104,21 @@ class CreateCommand extends Command {
 // file_get_contents($data_base);
 // $vars = array(
 //   '{$club}'       => 'Barcelona',
-//   '{$tag}'        => 'sometext', 
+//   '{$tag}'        => 'sometext',
 //   '{$anothertag}' => 'someothertext'
 // );
+    $vars = array(
+      '{{themeName}}'=> $theme,
+      '{{themeDescription}}'=> $bundlezip
+    );
+    function replace_tags($string, $vars){
+      return str_replace(array_keys($vars), $vars, $string);
+    }
+    $template = file_get_contents('template/info.yml', true);
+    echo replace_tags($template, $vars);
+    $tempInfo = 'template';
+    recurse_copy($tempInfo,$theme);
+    rename($theme.'/info.yml',$theme.'/'.$theme.'.info.yml');
 
     $files = array();
     foreach($htmlfiles as &$file){
