@@ -107,12 +107,18 @@ class CreateCommand extends Command {
 //   '{$tag}'        => 'sometext',
 //   '{$anothertag}' => 'someothertext'
 // );
-    function replace_tags($string){
-        $vars = array('{{themeName}}'=>'Bob', '{{themeDescription}}'=>'user_name');
-        return str_replace(array_keys($vars), $vars, $string);
+    $vars = array(
+      '{{themeName}}'=> $theme,
+      '{{themeDescription}}'=> $bundlezip
+    );
+    function replace_tags($string, $vars){
+      return str_replace(array_keys($vars), $vars, $string);
     }
-
-$template = file_get_contents('../../../template/info.yml', true);
+    $template = file_get_contents('template/info.yml', true);
+    echo replace_tags($template, $vars);
+    $tempInfo = 'template';
+    recurse_copy($tempInfo,$theme);
+    rename($theme.'/info.yml',$theme.'/'.$theme.'.info.yml');
 
 echo replace_tags($template);
     $files = array();
