@@ -2,78 +2,20 @@
 
 /**
  * @file
- * Functions to support theming in the tide theme.
+ * Functions to support theming in the {{themeName}} theme.
  */
 
-use Drupal\Component\Utility\SafeMarkup;
-
-use Drupal\file\Entity\File;
-
+use Drupal\clutch\ClutchNodeBuilder;
 /**
 * Implements hook_preprocess() for component.
 */
-// function tide_preprocess(array &$variables) {
-// 	if(isset($variables['elements']['#component'])) {
-// 		$component = $variables['elements']['#component'];
 
-// 		$fields = array();
-// 		$fields_definition = $component->getFieldDefinitions();
-// 		foreach($fields_definition as $field_definition) {
-// 		  if(!empty($field_definition->getTargetBundle())) {
-// 		    if($field_definition->getType() == 'entity_reference_revisions') {
-// 		      $paragraph_field = array();
-// 		      $field_name = $field_definition->getName();
-// 		      $field_values = $component->get($field_name)->getValue();
-// 		      $field_language = $field_definition->language()->getId();
-// 		      foreach($field_values as $index => $field_value) {
-// 		        $paragraph = entity_load('paragraph', $field_value['target_id']);
-// 		        $paragraph_field[]= _tide_get_fields_for_paragraph($paragraph);
-// 		      }
-// 		      $variables[$field_name]['content'] = $paragraph_field;
-// 		      $variables[$field_name]['quickedit'] = $component->getEntityTypeId() . '/' . $component->id() . '/' . $field_name . '/' . $field_language . '/full';
-// 		    }else {
-// 		      $non_paragraph_field = _tide_field_preparation($component, $field_definition);
-// 		      $key_also_non_paragraph_field_name = key($non_paragraph_field);
-// 		      $variables[$key_also_non_paragraph_field_name] = $non_paragraph_field[$key_also_non_paragraph_field_name];
-// 		    }
-// 		  }
-// 		}
-// 		dpm($variables);
-// 	}
-			
-// 	return $variables;
-// }
-
-// function _tide_get_fields_for_paragraph($paragraph) {
-//   $fields_definition = array();
-//   $fields_definition = $paragraph->getFieldDefinitions();
-//   $fields = array();
-//   foreach($fields_definition as $field_definition) {
-//     if(!empty($field_definition->getTargetBundle())) {
-//       $field_in_paragraph = _tide_field_preparation($paragraph, $field_definition);
-//       $key_also_paragraph_field = key($field_in_paragraph);
-//       $fields[$key_also_paragraph_field] = $field_in_paragraph[$key_also_paragraph_field];
-//     }
-//   }
-//   $fields['quickedit'] = 'paragraph/'.$paragraph->id();
-//   return $fields;
-// }
-
-// function _tide_field_preparation($entity, $field_definition) {
-//   $field_name = $field_definition->getName();
-//   $field_language = $field_definition->language()->getId();
-//   $field_value = $entity->get($field_name)->getValue();
-//   $field_type = $field_definition->getType();
-
-//   if($field_type == 'image') {
-//     $file = File::load($field_value[0]['target_id']);
-//     $url = file_create_url($file->get('uri')->value);
-//     $field_value[0]['url'] = $url;
-//   }
-
-//   $field_attribute = $entity->getEntityTypeId() . '/' . $entity->id() . '/' . $field_name . '/' . $field_language . '/full';
-//   return [$field_name => array(
-//     'content' => $field_value[0],
-//     'quickedit' => $field_attribute,
-//   )];
-// }
+function {{themeName}}_preprocess_node(&$variables){
+  $node = $variables['node'];
+  $nodeBuilder = new ClutchNodeBuilder();
+  $contentTypeName = ($variables['node']->getType());
+  $content_type = str_replace('_', '-', $contentTypeName);
+  $findAndReplace = $nodeBuilder->findAndReplace($content_type, $node);
+  unset($variables['title_suffix']);
+  $variables['content']['#markup'] = $findAndReplace;
+}

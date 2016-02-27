@@ -99,14 +99,12 @@ class CreateCommand extends Command {
     // Move css from zip rename with theme name.
     recurse_copy($cssDir,$themecss);
 
+    $tempInfo = 'template';
+    recurse_copy($tempInfo,$theme);
+    rename($theme.'/info.yml',$theme.'/'.$theme.'.info.yml');
+    rename($theme.'/libraries.yml',$theme.'/'.$theme.'.libraries.yml');
+    rename($theme.'/template.theme',$theme.'/'.$theme.'.theme');
 
-// $data_base = 'I am a {$club} fan. okay anohter {$tag} from another tag {$anothertag}'; // Tests
-// file_get_contents($data_base);
-// $vars = array(
-//   '{$club}'       => 'Barcelona',
-//   '{$tag}'        => 'sometext',
-//   '{$anothertag}' => 'someothertext'
-// );
     $vars = array(
       '{{themeName}}'=> $theme,
       '{{themeDescription}}'=> $bundlezip
@@ -114,11 +112,20 @@ class CreateCommand extends Command {
     function replace_tags($string, $vars){
       return str_replace(array_keys($vars), $vars, $string);
     }
-    $template = file_get_contents('template/info.yml', true);
-    echo replace_tags($template, $vars);
-    $tempInfo = 'template';
-    recurse_copy($tempInfo,$theme);
-    rename($theme.'/info.yml',$theme.'/'.$theme.'.info.yml');
+
+    $template = file_get_contents($theme.'/'.$theme.'.info.yml', true);
+    $infoYML = replace_tags($template, $vars);
+    file_put_contents($theme.'/'.$theme.'.info.yml', $infoYML);
+
+    $template = file_get_contents($theme.'/'.$theme.'.libraries.yml', true);
+    $infoYML = replace_tags($template, $vars);
+    file_put_contents($theme.'/'.$theme.'.libraries.yml', $infoYML);
+
+    $template = file_get_contents($theme.'/'.$theme.'.theme', true);
+    $infoYML = replace_tags($template, $vars);
+    file_put_contents($theme.'/'.$theme.'.theme', $infoYML);
+
+
 
     $files = array();
     foreach($htmlfiles as &$file){

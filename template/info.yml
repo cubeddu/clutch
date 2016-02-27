@@ -11,6 +11,7 @@ libraries:
   - {{themeName}}/global-css
   - {{themeName}}/global-js
 
+
 region:
   header:   Header
   content:  Content
