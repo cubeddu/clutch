@@ -19,11 +19,12 @@ class CreateCommand extends Command {
   protected function configure()
   {
     $this
-      ->setName('create:components')
+      ->setName('create:theme')
       ->setDescription('This will generate your components folder')
       ->setDefinition(array(
         new InputOption('zip-file', 'z', InputOption::VALUE_REQUIRED, 'Name of the zip file.'),
         new InputOption('theme-name', 't', InputOption::VALUE_REQUIRED, 'Theme Name'),
+        new InputOption('theme-description', 'd', InputOption::VALUE_REQUIRED, 'Theme description'),
       ))        ;
   }
 
@@ -45,6 +46,14 @@ class CreateCommand extends Command {
       $question = new Question('<info>Please enter theme name:</info> <comment>[webflow]</comment> ', 'webflow');
       $theme = $helper->ask($input, $output, $question);
     }
+
+    $themeDesc = $input->getOption('theme-description');
+    if(!$themeDesc){
+      $helper = $this->getHelper('question');
+      $question = new Question('<info>Please enter theme description:</info> <comment>[These is a webflow theme]</comment> ', 'These is a webflow theme');
+      $themeDesc = $helper->ask($input, $output, $question);
+    }
+
     // echo $theme;
     $zip = new ZipArchive;
     if ($zip->open($withZip) === TRUE) {
@@ -55,6 +64,7 @@ class CreateCommand extends Command {
       $output->writeln('<comment>Failed to open the archive!</comment>');
     }
     $directory = "html/{$bundlezip}/";
+    $themeMachine = strtolower(str_replace(" ","-",$theme));
     $cssDir = "html/{$bundlezip}/css";
     $jsDir = "html/{$bundlezip}/js";
     $fontDir = "html/{$bundlezip}/fonts";
@@ -68,8 +78,6 @@ class CreateCommand extends Command {
         $dir = opendir($src);
         @mkdir($dst);
         while(false !== ( $file = readdir($dir)) ) {
-          // print_r($temp);
-
             if (( $file != '.' ) && ( $file != '..' )) {
                 if ( is_dir($src . '/' . $file) ) {
                   recurse_copy($src . '/' . $file,$dst . '/' . $file);
@@ -107,7 +115,8 @@ class CreateCommand extends Command {
 
     $vars = array(
       '{{themeName}}'=> $theme,
-      '{{themeDescription}}'=> $bundlezip
+      '{{themeMachine}}'=> $themeMachine,
+      '{{themeDescription}}'=> $themeDesc
     );
     function replace_tags($string, $vars){
       return str_replace(array_keys($vars), $vars, $string);

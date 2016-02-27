@@ -10,7 +10,7 @@ use Drupal\clutch\ClutchNodeBuilder;
 * Implements hook_preprocess() for component.
 */
 
-function {{themeName}}_preprocess_node(&$variables){
+function {{themeMachine}}_preprocess_node(&$variables){
   $node = $variables['node'];
   $nodeBuilder = new ClutchNodeBuilder();
   $contentTypeName = ($variables['node']->getType());
