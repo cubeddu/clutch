@@ -64,7 +64,7 @@ class CreateCommand extends Command {
       $output->writeln('<comment>Failed to open the archive!</comment>');
     }
     $directory = "html/{$bundlezip}/";
-    $themeMachine = strtolower(str_replace(" ","-",$theme));
+    $themeMachine = strtolower(str_replace(" ","_",$theme));
     $cssDir = "html/{$bundlezip}/css";
     $jsDir = "html/{$bundlezip}/js";
     $fontDir = "html/{$bundlezip}/fonts";
@@ -107,7 +107,7 @@ class CreateCommand extends Command {
     // Move css from zip rename with theme name.
     recurse_copy($cssDir,$themecss);
 
-    $tempInfo = 'template';
+    $tempInfo = __DIR__.'/../../../template';
     recurse_copy($tempInfo,$theme);
     rename($theme.'/info.yml',$theme.'/'.$theme.'.info.yml');
     rename($theme.'/libraries.yml',$theme.'/'.$theme.'.libraries.yml');
