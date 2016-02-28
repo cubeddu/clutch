@@ -2,6 +2,10 @@
 <?php
 
 require __DIR__.'/../vendor/autoload.php';
+// echo require __DIR__.'/../template';
+$root = __DIR__.'/../';
+// echo $root.'template';
+
 
 use Clutch\Command;
 use Symfony\Component\Console\Application;
