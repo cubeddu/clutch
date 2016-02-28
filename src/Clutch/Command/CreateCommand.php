@@ -134,8 +134,6 @@ class CreateCommand extends Command {
     $infoYML = replace_tags($template, $vars);
     file_put_contents($theme.'/'.$theme.'.theme', $infoYML);
 
-
-
     $files = array();
     foreach($htmlfiles as &$file){
       $bundle_file_name = basename($file,".html");
@@ -160,25 +158,7 @@ class CreateCommand extends Command {
         foreach ($node as $childNode) {
           $result .= $doc->saveHtml($childNode); //store the div block to result line by line;
         }
-        $fields_names = array(); //process to get the field-names of the div block and store to $fields_names
-        $data_fields = explode('data-field="', $result);
-        array_shift($data_fields);
-        foreach ($data_fields as &$data_field) {
-          $data_type = strtolower($data_field);
-          if (strpos($data_type, 'data-type') !== false) {
-            $data_type = explode('data-type="', $data_type);
-            $data_type = substr($data_type[1], 0, strpos($data_type[1], '"'));
-          } else {
-            $data_type = 'Undefined';
-          }
-
-          $data_field = substr($data_field, 0, strpos($data_field, '"'));
-          $temp = array($data_field, $data_type);
-          array_push($fields_names, $temp);
-          //     echo "$data_field -> $data_type<br/>"; //Display the fields names
-        }
-
-        $temp = array($bundle_names[$i], $fields_names, $result);
+        $temp = array($bundle_names[$i], $result);
         array_push($extracted_info, $temp);
       }
 
@@ -206,24 +186,9 @@ class CreateCommand extends Command {
           mkdir($theme_components . $info[0] , 0777, true);
         }
         $filename = $theme_components . $info[0] . '/' . $info[0] . '.html.twig';
-        file_put_contents($filename, $info[2]);
+        file_put_contents($filename, $info[1]);
         $output->writeln('<comment>'.$filename.' </comment>');
         /* echo count($filename++); */
-
-        $yaml_filename = $theme_components . $info[0]. '/' . $info[0] . '.yml';
-        $yaml = $html_filename . '_' . $info[0] . ":\r\n  ";
-        $yaml .= 'label: ' . $html_filename . '_' . $info[0] . "\r\n  ";
-        $yaml .= 'id: ' . $html_filename . '_' . $info[0] . ":\r\n  ";
-        $yaml .= 'fields:' . "\r\n      ";
-        foreach ($info[1] as &$field) {
-          $yaml .= $field[0] . ':' . "\r\n          ";
-          $yaml .= 'label: ' . $field[0] . "\r\n          ";
-          $yaml .= 'required: false' . "\r\n          ";
-          $yaml .= 'type: ' . $field[1] . "\r\n          ";
-          $yaml .= 'cardinality: 1' . "\r\n          ";
-          $yaml .= 'custom_storage: false' . "\r\n       ";
-        }
-        file_put_contents($yaml_filename, $yaml);
       }
     }
 
