@@ -3,7 +3,7 @@ global-css:
     theme:
       css/normalize.css: {}
       css/webflow.css: {}
-      css/parksyouthranch.webflow.css: {}
+      css/{{themeMachine}}.webflow.css: {}
 global-js:
   js:
     js/webflow.js: {}
