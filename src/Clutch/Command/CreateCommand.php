@@ -25,7 +25,7 @@ class CreateCommand extends Command {
         new InputOption('zip-file', 'z', InputOption::VALUE_REQUIRED, 'Name of the zip file.'),
         new InputOption('theme-name', 't', InputOption::VALUE_REQUIRED, 'Theme Name'),
         new InputOption('theme-description', 'd', InputOption::VALUE_REQUIRED, 'Theme description'),
-      ))        ;
+      ));
   }
 
   protected function execute(InputInterface $input, OutputInterface $output)
@@ -33,11 +33,9 @@ class CreateCommand extends Command {
     $bundlezip = $input->getOption('zip-file');
     if(!$bundlezip){
       $helper = $this->getHelper('question');
-      $question = new Question("What is your language?\n", 'english');
       $question = new Question('<info>Please enter the name of the zip file:</info> <comment>[webflow]</comment> ', 'webflow');
       $bundlezip = $helper->ask($input, $output, $question);
     }
-    // echo $bundlezip;
     $withZip = $bundlezip. ".zip";
 
     $theme = $input->getOption('theme-name');
@@ -54,7 +52,6 @@ class CreateCommand extends Command {
       $themeDesc = $helper->ask($input, $output, $question);
     }
 
-    // echo $theme;
     $zip = new ZipArchive;
     if ($zip->open($withZip) === TRUE) {
       $zip->extractTo('html/');
@@ -62,7 +59,9 @@ class CreateCommand extends Command {
       $output->writeln('<info>Starting Theme creation process</info>');
     } else {
       $output->writeln('<comment>Failed to open the archive!</comment>');
+      return false;
     }
+
     $directory = "html/{$bundlezip}/";
     $themeMachine = strtolower(str_replace(" ","_",$theme));
     $cssDir = "html/{$bundlezip}/css";
@@ -74,6 +73,7 @@ class CreateCommand extends Command {
     $themefont = "{$theme}/fonts";
     $themeimg = "{$theme}/images";
     $htmlfiles = glob($directory . "*.html");
+
     function recurse_copy($src,$dst) {
         $dir = opendir($src);
         @mkdir($dst);
@@ -91,21 +91,36 @@ class CreateCommand extends Command {
     }
     if (!file_exists($theme)) {
         mkdir($theme, 0777, true);
-      }
+    }
 
     // Move files from zip to new theme.
-    recurse_copy($jsDir,$themejs);
-    recurse_copy($fontDir,$themefont);
-    recurse_copy($imgDir,$themeimg);
-
-    $css = opendir($cssDir);
+    if(empty($cssDir)){
+      $output->writeln('<comment>Failed to find CSS folder. make sure you are using the webflow zip</comment>');
+    }else{
+        $css = opendir($cssDir);
       while(false !== ( $file = readdir($css)) ) {
         if ( substr($file, -12) == '.webflow.css'){
           rename( $cssDir.'/'.$file, $cssDir.'/'.$theme.substr($file, -12));
         }
       }
-    // Move css from zip rename with theme name.
-    recurse_copy($cssDir,$themecss);
+       // Move css from zip rename with theme name.
+      recurse_copy($cssDir,$themecss);
+    }
+    if(!$jsDir){
+      $output->writeln('<comment>Failed to find JS folder. make sure you are using the webflow zip</comment>');
+    }else{
+      recurse_copy($jsDir,$themejs);
+    }
+    if(!$fontDir){
+      $output->writeln('<comment>Failed to find Fonts folder. make sure you are using the webflow zip</comment>');
+    }else{
+      recurse_copy($fontDir,$themejs);
+    }
+    if(!$imgDir){
+      $output->writeln('<comment>Failed to find Images folder. make sure you are using the webflow zip</comment>');
+    }else{
+      recurse_copy($imgDir,$themejs);
+    }
 
     $tempInfo = __DIR__.'/../../../template';
     recurse_copy($tempInfo,$theme);
