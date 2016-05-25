@@ -13,9 +13,8 @@ $application = new Application('
 / /___/ /__\ \_/ // / / /___/ __  /
 \____/\____/\___/ \/  \____/\/ /_/
 
-Clutch', '1.2.1');
+Clutch', '0.2.0');
 
 $application->add(new Command\CreateCommand());
 $application->add(new Command\UpdateCommand());
-
 $application->run();
