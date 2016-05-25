@@ -1,8 +1,8 @@
 [
     {
         "name": "clutch.phar",
-        "sha1": "6db06c10d1acfe18e1ea1efd89464bda9454f042",
+        "sha1": "81cc620dd55feec272ed83a4130600e42f942353",
         "url": "https://cubeddu.github.io/clutch/Download/clutch.phar",
-        "version": "1.2.1"
+        "version": "0.2.0"
     }
 ]
